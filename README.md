@@ -1,2 +1,3 @@
 # alx-backend-javascript
-An Alx backend repository
+
+An Alx javascript backend repository
