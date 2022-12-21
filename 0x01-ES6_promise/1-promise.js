@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 export default function getFullResponseFromAPI(success) {
   // eslint-disable-next-line no-unused-vars
   return new Promise((_resolve, _reject) => {
