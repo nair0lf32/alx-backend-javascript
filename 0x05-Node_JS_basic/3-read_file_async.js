@@ -1,25 +1,41 @@
 /* eslint-disable linebreak-style */
 const fs = require('fs');
+const readline = require('readline');
 
-function countStudents(path) {
-  const promise = (resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) reject(Error('Cannot load the database'));
-      if (data) {
-        const lines = data.split('\n');
-        const students = lines.filter((line) => line).map((line) => line.split(',')).slice(1);
-        const nStudents = students.length;
-        const csStudents = students.filter((student) => student[3] === 'CS').map((student) => student[0]);
-        const sweStudents = students.filter((student) => student[3] === 'SWE').map((student) => student[0]);
-        const nCsStudents = csStudents.length;
-        const nSweStudents = sweStudents.length;
-        const message = `Number of students: ${nStudents}\nNumber of students in CS: ${nCsStudents}. List: ${csStudents.join(', ')}\nNumber of students in SWE: ${nSweStudents}. List: ${sweStudents.join(', ')}`;
-        console.log(message);
-        resolve(message);
-      }
+async function countStudents(path) {
+  fs.stat(path, (error) => {
+    if (error) {
+      throw new Error('Cannot load the database');
+    }
+  });
+  const stream = await fs.createReadStream(path);
+  const p = new Promise((resolve) => {
+    const rl = readline.createInterface({ input: stream });
+    const data = [];
+    rl.on('line', (row) => {
+      data.push(row.split(','));
     });
-  };
-  return new Promise(promise);
+    rl.on('close', () => {
+      const cs = [];
+      const swe = [];
+      data.forEach((element) => {
+        if (element[element.length - 1] === 'CS') {
+          cs.push(element[0]);
+        } else if (element[element.length - 1] === 'SWE') {
+          swe.push(element[0]);
+        }
+      });
+      const display = () => {
+        let output = `Number of students: ${data.length - 1}\n`;
+        output += `Number of students in CS: ${cs.length}. List: ${cs.join(', ')}\n`;
+        output += `Number of students in SWS: ${swe.length}. List: ${swe.join(', ')}`;
+        console.log(output);
+      };
+
+      resolve(display());
+    });
+  });
+  return p;
 }
 
 module.exports = countStudents;

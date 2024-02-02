@@ -7,17 +7,11 @@ const port = 1245;
 const app = http.createServer((req, res) => {
   res.statusCode = 200;
   res.setHeader('Content-Type', 'text/plain');
-  switch (req.url) {
-    case '/':
-      res.end('Hello Holberton School!');
-      break;
-    default:
-      res.end();
-  }
+  res.end('Hello Holberton School!');
 });
 
 app.listen(port, hostname, () => {
-  console.log('Hello Holberton School!');
+  console.log('...');
 });
 
-export default app;
+module.exports = app;
